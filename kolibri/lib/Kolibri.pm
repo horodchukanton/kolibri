@@ -48,8 +48,9 @@ get '/login' => sub {
   };
 
 get '/logout' => sub {
-    app->destroy_session;
-    redirect '/';
+    session 'user' => '';
+#    app->destroy_session;
+    redirect '/login';
   };
 
 post '/login' => sub {
