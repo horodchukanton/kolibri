@@ -5,7 +5,52 @@
   var customers = JSON.parse('[% customers %]');
 
   $(function () {
+    
+    // Add sum function
+    jQuery.fn.dataTable.Api.register('sum()', function () {
+      return this.flatten().reduce(function (a, b) {
 
+        if (typeof a === 'string') {
+          a = a.replace(/[^\d.-]/g, '') * 1;
+        }
+        if (typeof b === 'string') {
+          b = b.replace(/[^\d.-]/g, '') * 1;
+        }
+
+        var result = +a + +b;
+        return result.toFixed(2);
+      }, 0);
+    });
+    
+    // Add sum to footer
+    window['DATATABLE_OPTIONS']['footerCallback'] = function (row, data, start, end, display) {
+      var api = this.api(), data;
+
+      try {
+        // Remove the formatting to get integer data for summation
+        var intVal = function (i) {
+          return typeof i === 'string' ?
+              i.replace(/[\$,]/g, '') * 1 :
+              typeof i === 'number' ?
+                  i : 0;
+        };
+
+        // Total over this page
+        var pageTotal = api
+            .column(8, {page: 'current'})
+            .data()
+            .reduce(function (a, b) {
+              return intVal(a) + intVal(b);
+            }, 0);
+
+        // Update footer
+        $(api.column(8).footer()).html(pageTotal);
+      }
+      catch (Error){
+        console.log(Error)
+      }
+    };
+    
     var current_date = new Date();
     var day = current_date.getDay();
     var month = current_date.getMonth();

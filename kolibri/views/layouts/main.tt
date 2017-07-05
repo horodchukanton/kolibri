@@ -51,6 +51,8 @@
         "sSortDescending": ": активувати для сортування стовпців за спаданням"
       }
     };
+    
+    window['DATATABLE_OPTIONS'] = {};
   </script>
 </head>
 <body class="hold-transition skin-purple sidebar-mini">

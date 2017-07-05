@@ -5,30 +5,9 @@
 [% END %]
 
 [% IF !load_script %]
-<!--
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.0.0/css/rowGroup.dataTables.min.css">
 
-<link rel="stylesheet" href="/adminlte/plugins/datatables/jquery.dataTables.min.css">
-<link rel="stylesheet" href="/adminlte/plugins/datatables/dataTables.bootstrap.css">
--->
 <link rel="stylesheet" href="/datatable/datatables.min.css">
-
 <script src="/datatable/datatables.min.js"></script>
-<!--
-<script src="https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/rowgroup/1.0.0/js/dataTables.rowGroup.min.js"></script>
-
-<link rel="stylesheet" href="/adminlte/plugins/datatables/extensions/TableTools/css/dataTables.tableTools.min.css">
-<script src="/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/adminlte/plugins/datatables/dataTables.bootstrap.min.js"></script>
--->
-<!--
-<script src="/adminlte/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
--->
 
 [% END %]
 
@@ -64,15 +43,9 @@
           </tbody>
           <tfoot>
           <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            [% FOREACH heading IN table.headings %]
+              <td></td>
+            [% END %]
           </tr>
           </tfoot>
         </table>
@@ -85,24 +58,10 @@
 <script>
   jQuery(function () {
 
-    jQuery.fn.dataTable.Api.register('sum()', function () {
-      return this.flatten().reduce(function (a, b) {
-
-        if (typeof a === 'string') {
-          a = a.replace(/[^\d.-]/g, '') * 1;
-        }
-        if (typeof b === 'string') {
-          b = b.replace(/[^\d.-]/g, '') * 1;
-        }
-
-        var result = +a + +b;
-        return result.toFixed(2);
-      }, 0);
-    });
-
     var datatable_options = $.extend({
       dom     : 'lB<"clear">frtip',
-      buttons : ['excel', 'pdf',
+      buttons : [
+//          'excel', 'pdf',
         {
           extend: 'colvis',
           text  : 'Показати/заховати кол.'
