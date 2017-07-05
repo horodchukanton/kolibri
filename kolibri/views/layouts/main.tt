@@ -27,6 +27,31 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+
+  <script>
+    window['DATATABLE_LANGUAGE'] = {
+      "sProcessing" : "Зачекайте...",
+      "sLengthMenu" : "Показати _MENU_ записів",
+      "sZeroRecords": "Записи відсутні.",
+
+      "sInfo"        : "Записи з _START_ по _END_ із _TOTAL_ записів",
+      "sInfoEmpty"   : "Записи з 0 по 0 із 0 записів",
+      "sInfoFiltered": "(відфільтровано з _MAX_ записів)",
+      "sInfoPostFix" : "",
+      "sSearch"      : "Пошук:",
+      "sUrl"         : "",
+      "oPaginate"    : {
+        "sFirst"   : "Перша",
+        "sPrevious": "Попередня",
+        "sNext"    : "Наступна",
+        "sLast"    : "Остання"
+      },
+      "oAria"        : {
+        "sSortAscending" : ": активувати для сортування стовпців за зростанням",
+        "sSortDescending": ": активувати для сортування стовпців за спаданням"
+      }
+    };
+  </script>
 </head>
 <body class="hold-transition skin-purple sidebar-mini">
 <div class="wrapper">
@@ -52,7 +77,7 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Control Sidebar Toggle Button -->
-          
+
         </ul>
       </div>
     </nav>
@@ -109,9 +134,9 @@
 
     <!-- Main content -->
     <section class="content">
-
+      
       [% IF session.flash %]
-        
+
         <div class="alert alert-warning alert-dismissible fade in" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">×</span>
@@ -136,7 +161,7 @@
     <!-- Default to the left -->
     <strong>Copyright &copy; 2017 <a href="#">Anykey</a>.</strong> All rights reserved.
   </footer>
-  
+
 </div>
 <!-- ./wrapper -->
 

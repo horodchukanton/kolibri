@@ -7,9 +7,14 @@
   $(function () {
 
     var current_date = new Date();
-    var date_str     = current_date.getFullYear() + '-' + current_date.getMonth() + '_' + current_date.getDay();
+    var day = current_date.getDay();
+    var month = current_date.getMonth();
+    
+    var date_str  = current_date.getFullYear()
+        + '-' + (month < 10 ? '0' + month : month)
+        + '-' + (day < 10 ? '0' + day : day);
 
-    function export_current_with_name(name, export_options) {
+    function exportCurrentWithName(name, export_options) {
       var api = $('#table_').DataTable();
 
       api.button().add(0, {
@@ -44,7 +49,7 @@
         api.page.len(-1).draw();
         api.search(customer_name).draw();
 
-        export_current_with_name(customer_name, {
+        exportCurrentWithName(customer_name + '_' + date_str, {
           columns: ':not(:eq(1))'
         });
       });
@@ -57,7 +62,7 @@
       api.page.len(-1).draw();
       api.search('').draw();
 
-      export_current_with_name("Колібрі_Друк_" + date_str, {});
+      exportCurrentWithName("Колібрі_Друк_" + date_str, {});
     });
 
   });
