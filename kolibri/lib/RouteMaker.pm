@@ -3,6 +3,8 @@ use strict;
 use warnings FATAL => 'all';
 use utf8;
 
+
+
 sub route_show_list {
   my ( $schema, $route, $name, $template_rows, $attr ) = @_;
   
@@ -26,7 +28,7 @@ sub route_create {
   
   return sub {
     if ( $schema->create( { params } ) ) {
-      session flash => 'Добавлено новий елемент';
+      session flash => 'New element have been added';
     }
     
     redirect $route;
@@ -65,10 +67,10 @@ sub route_change {
       my %values_we_care = map { $_ => $values{$_} } @keys;
       
       $item_to_change->update( { %values_we_care } );
-      session flash => $name . ' змінено';
+      session flash => $name . ' have been changed';
     }
     else {
-      session flash => $name . ' для зміни не знайдено';
+      session flash => $name . ' to change was not found';
     }
     
     redirect $route;
@@ -83,18 +85,18 @@ sub route_remove {
     
     if ( $param && $param eq 'all' ) {
       $schema->delete_all;
-      session flash => "Всі " . lc $name . ' видалено';
+      session flash => "All " . lc $name . ' have been deleted';
       redirect $route;
     }
     
     my $item_to_delete = $schema->find( params->{id} );
     if ( $item_to_delete ) {
       $item_to_delete->delete();
-      session flash => $name . ' видалено';
+      session flash => $name . ' was deleted';
     }
     else {
       session flash => $name
-          . ' для видалення не знайдено';
+          . ' to delete was not found';
     }
     
     redirect $route;

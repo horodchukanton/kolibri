@@ -118,10 +118,10 @@ post $ROUTE . '/change' => sub {
       my %updated = map { $_ => $calculated->{$_}  } grep { defined $values{$_} } @keys;
       
       $item_to_change->update( \%updated );
-      session flash => $NAME . ' змінено';
+      session flash => $NAME . ' have changed';
     }
     else {
-      session flash => $NAME . ' для зміни не знайдено';
+      session flash => $NAME . ' was not found';
     }
     
     redirect $ROUTE . '/view';
@@ -245,7 +245,7 @@ post '/files/upload/save' => sub {
       });
     }
     
-    session flash => 'Список збережено, додано ' . scalar(@{$rows}) . ' елементів';
+    session flash => 'List have been saved. Added ' . scalar(@{$rows}) . ' new elements';
     
     return $json->encode({
       result => 'ok'

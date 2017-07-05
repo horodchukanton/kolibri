@@ -49,7 +49,6 @@ get '/login' => sub {
 
 get '/logout' => sub {
     app->destroy_session;
-    
     redirect '/';
   };
 
@@ -62,6 +61,7 @@ post '/login' => sub {
       or redirect '/login';
     
     session user => $login;
+    
     set layout => 'main';
     redirect $redir_url;
   };
