@@ -53,7 +53,7 @@ my @template_rows = (
     name      => 'material_price',
     id        => 'material_price',
     type      => 'static',
-    lang_name => 'Ціна по матеріалу'
+    lang_name => 'Ціна за друк'
   },
   {
     name      => 'extra_elements',
@@ -175,15 +175,15 @@ post '/files/upload/file' => sub {
     
     
     return template 'files/analyzed_preview', {
-        ANALYZED            => $json->encode(\@price_calculated),
+        ANALYZED               => $json->encode(\@price_calculated),
+        CUSTOMERS_ARE_REQUIRED => $customers_are_required,
         
-        MATERIALS_HASH      => $json->encode(\%materials_hash),
-        CUSTOMERS_HASH      => $json->encode(\%customers_hash),
-        EXTRA_ELEMENTS_HASH => $json->encode(\%extra_elements_hash),
+        MATERIALS_HASH         => $json->encode(\%materials_hash),
+        CUSTOMERS_HASH         => $json->encode(\%customers_hash),
+        EXTRA_ELEMENTS_HASH    => $json->encode(\%extra_elements_hash),
         
-        customers_required  => $customers_are_required,
-        bad_names           => \@bad_rows,
-        has_bad_names       => scalar(@bad_rows),
+        bad_names              => \@bad_rows,
+        has_bad_names          => scalar(@bad_rows),
       };
   };
 
@@ -453,7 +453,7 @@ sub calculate_single {
   };
   
   # Calculate material price
-  if ($row->{area} < 18){
+  if ( $row->{area} < 18 ) {
     $row->{material_price} = $row->{area} * $attr->{price_per_m};
   }
   else {

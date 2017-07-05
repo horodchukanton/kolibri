@@ -201,7 +201,7 @@ sub analyze {
   unless (
     $result{matched_size}
     && $result{matched_materials}
-    && ($result{matched_customers} && $self->{customers_are_required})
+    && ($result{matched_customers} || !$self->{customers_are_required})
   ){
     $result{error} = 'Не знайдено всі поля в імені файлу';
   }
