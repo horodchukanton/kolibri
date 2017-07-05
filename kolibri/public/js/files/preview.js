@@ -13,6 +13,8 @@ $(function () {
   
   var analyzed = window['ANALYZED'];
   
+  var customers_are_required = window['CUSTOMERS_ARE_REQUIRED'];
+  
   console.log(analyzed);
   
   var customers_select = new HashSelect('customers', customers);
@@ -51,8 +53,13 @@ $(function () {
         var value = $(tds[j]).data('value');
         
         console.log(columns_ordered[j], value);
-        if (!value && columns_ordered[j] === 'extra_price'){
-          value = 0;
+        if (!value) {
+          if (columns_ordered[j] === 'extra_price') {
+            value = 0;
+          }
+          else if (columns_ordered[j] === 'customers') {
+            value = 0;
+          }
         }
         
         if (typeof (value) === 'undefined') {
@@ -70,29 +77,30 @@ $(function () {
       rows[rows.length] = current_row;
     }
     
-    $.post('/files/upload/save', {rows: JSON.stringify(rows)}, function (data) {
-      
-      console.log(data);
-      
-      try {
-        var resp = JSON.parse(data);
-        
-        if (resp['result'] === 'ok') {
-          location.href = '/files/view';
-        }
-        else if (resp['result'] === 'failed') {
-          //reason => $reason,
-          //    row    => ($current_processed_row + 1)
-          alert('При збереженні виникла помилка : '
-              + resp['reason'] + ' ( рядок ' + resp['row'] + ' ).'
-              + ' Виправте помилку та спробуйте знову')
-        }
-        
-      } catch (Error) {
-        alert("Error");
-      }
-      
-    });
+    $.post('/files/upload/save', {rows: JSON.stringify(rows), customers_are_required: customers_are_required},
+        function (data) {
+          
+          console.log(data);
+          
+          try {
+            var resp = JSON.parse(data);
+            
+            if (resp['result'] === 'ok') {
+              location.href = '/files/view';
+            }
+            else if (resp['result'] === 'failed') {
+              //reason => $reason,
+              //    row    => ($current_processed_row + 1)
+              alert('При збереженні виникла помилка : '
+                  + resp['reason'] + ' ( рядок ' + resp['row'] + ' ).'
+                  + ' Виправте помилку та спробуйте знову')
+            }
+            
+          } catch (Error) {
+            alert("Error");
+          }
+          
+        });
   }
   
   function HashSelect(name, hash) {
@@ -288,16 +296,16 @@ $(function () {
         new SingleTextSender(new_text).send(function (data) {
           
           if (typeof data['error'] === 'undefined') {
-  
+            
             var $new_row = new PreviewTableRow(data[0]);
             var row_tr   = $new_row.getTr('bg-teal');
-  
+            
             var api = $table.DataTable();
             
             api.rows.add(row_tr).draw();
-  
+            
             self.removeLi(button.parents('li').first(), row_tr);
-  
+            
             // Renew datatables cache
             //$table.DataTable().
             $bad_text_modal.modal('hide');

@@ -1,13 +1,41 @@
-<button class="btn btn-primary btn-export-all">Експортувати окремими файлами по замовникам</button>
+<button class="btn btn-primary btn-export-by-customer">Експортувати окремими файлами по замовникам</button>
+<button class="btn btn-default btn-export-all">Експортувати все</button>
 
 <script>
   var customers = JSON.parse('[% customers %]');
 
   $(function () {
-    $('button.btn-export-all').on('click', function (e) {
-      e.preventDefault();
 
+    var current_date = new Date();
+    var date_str     = current_date.getFullYear() + '-' + current_date.getMonth() + '_' + current_date.getDay();
+
+    function export_current_with_name(name, export_options) {
       var api = $('#table_').DataTable();
+
+      api.button().add(0, {
+        extend        : 'csv',
+        text          : name,
+        title         : name,
+//          extension    : '.xls',
+        bom           : true,
+//          charset : ''
+        fieldSeparator: ';',
+        exportOptions : export_options,
+        footer        : true
+      });
+
+      var button = api.button(0);
+      button.trigger();
+      setTimeout(function () {
+        button.remove();
+      }, 1000);
+
+    }
+
+    $('button.btn-export-by-customer').on('click', function (e) {
+      e.preventDefault();
+      var api = $('#table_').DataTable();
+
 
       customers.forEach(function (customer_name) {
 //        $('head').find('title').text(customer_name);
@@ -16,31 +44,22 @@
         api.page.len(-1).draw();
         api.search(customer_name).draw();
 
-        api.column('Замовник').visible(false);
-
-        api.button().add(0, {
-          extend       : 'csv',
-          text         : customer_name,
-          title        : customer_name,
-//          extension    : '.xls',
-          bom : true,
-//          charset : ''
-          fieldSeparator : ';',
-          exportOptions: {
-            columns: ':not(:eq(1))'
-          },
-          footer       : true
+        export_current_with_name(customer_name, {
+          columns: ':not(:eq(1))'
         });
-
-        var button = api.button(0);
-        button.trigger();
-        setTimeout(function () {
-          button.remove();
-        }, 1000);
-
       });
-
-
     });
+
+    $('button.btn-export-all').on('click', function (e) {
+      e.preventDefault();
+      var api = $('#table_').DataTable();
+
+      api.page.len(-1).draw();
+      api.search('').draw();
+
+      export_current_with_name("Колібрі_Друк_" + date_str, {});
+    });
+
   });
+
 </script>

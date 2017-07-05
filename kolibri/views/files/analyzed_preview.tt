@@ -91,6 +91,8 @@
   window['EXTRA_ELEMENTS'] = JSON.parse('[% EXTRA_ELEMENTS_HASH %]');
 
   window['ANALYZED'] = JSON.parse('[% ANALYZED %]');
+  
+  window['CUSTOMERS_ARE_REQUIRED'] = '[% CUSTOMERS_ARE_REQUIRED %]';
 </script>
 
 <script src="/js/files/preview.js"></script>
@@ -98,31 +100,6 @@
 
 <script>
   jQuery(function () {
-
-    jQuery.fn.dataTable.Api.register('sum()', function () {
-      return this.flatten().reduce(function (a, b) {
-        if (typeof a === 'string') {
-          a = a.replace(/[^\d.-]/g, '') * 1;
-        }
-        if (typeof b === 'string') {
-          b = b.replace(/[^\d.-]/g, '') * 1;
-        }
-
-        var result = a + b;
-        return result.toFixed(2) + " грн.";
-      }, 0);
-    });
-
-    /*
-     drawCallback: function () {
-      var api = this.api();
-      $( api.table().footer() ).html(
-          api.column( 7, {page:'current'} ).data().sum()
-      );
-    }
-    
-    */
-
     
     jQuery('#preview_table').dataTable({
       dom     : 'lB<"clear">frtip',
