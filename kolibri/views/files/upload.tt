@@ -11,20 +11,20 @@
     background: #00CC71;
   }
 
-  .droppable p.message {
+  .droppable span.message {
     margin-bottom: 40px;
   }
 
   /* Toggles message */
-  .droppable.dragover p.message.idle {
+  .droppable.dragover span.message.idle {
     display: none;
   }
 
-  .droppable p.message.dragover {
+  .droppable span.message.dragover {
     display: none;
   }
 
-  .droppable.dragover p.message.dragover {
+  .droppable.dragover span.message.dragover {
     display: inline-block;
   }
 
@@ -38,19 +38,25 @@
         <div class='box-header with-border'><h4 class='box-title'>Завантаження файлів</h4></div>
         <div class='box-body'>
 
+          <div class="checkbox text-center">
+            <label for="CUSTOMERS_REQUIRED_CHB">
+              <input type="checkbox" name="CUSTOMERS_REQUIRED" id="CUSTOMERS_REQUIRED_CHB" value="1" checked="checked"/>
+              <strong>Обов'язково враховувати замовників</strong>
+            </label>
+          </div>
+          <hr>
           <div class='form-group'>
             <label for="file" class="col-md-10 col-md-offset-1 droppable">
-              <p class="message idle">Перетягніть файл в цю область</p>
-              <p class="message dragover">Відпустіть зараз, щоб додати файл</p>
+              <span class="message idle">Перетягніть файл в цю область</span>
+              <span class="message dragover">Відпустіть зараз, щоб додати файл</span>
               <input type="file" name="file" id="file" style="opacity: 0;">
             </label>
           </div>
 
         </div>
         <div class='box-footer text-center'>
-          <button type='submit' form='form_FILES_UPLOAD' class='btn btn-primary' name='submit'
-                  id="submit">Переглянути
-          </button>
+          <button type='submit' form='form_FILES_UPLOAD' class='btn btn-primary' name='submit' id="submit"
+          >Переглянути</button>
         </div>
       </div>
 
@@ -59,159 +65,45 @@
 </div>
 
 <script>
-  /*  function sendFileToServer(formData, status) {
-      var uploadURL = "/files/upload/file"; //Upload URL
-      var extraData = {}; //Extra Data.
-      var jqXHR     = $.ajax({
-        url        : uploadURL,
-        type       : "POST",
-        contentType: false,
-        processData: false,
-        cache      : false,
-        data       : formData,
-        success    : function (data) {
-        }
-      });
-    }*/
-
-  //  function handleFileUpload(files, obj) {
-  //    for (var i = 0; i < files.length; i++) {
-  //      var fd = new FormData();
-  //      fd.append('file', files[i]);
-  //
-  //      sendFileToServer(fd);
-  //    }
-  //  }
 
   $(document).ready(function () {
 
-    var obj = $(".droppable");
-    obj.on('dragenter', function (e) {
+    var $submit_btn     = $('button#submit');
+    var $droppable_zone = $(".droppable");
+    var $file_input     = $('input#file');
+
+    $droppable_zone.on('dragenter', function (e) {
       e.stopPropagation();
       e.preventDefault();
-      obj.addClass('dragover');
+      $droppable_zone.addClass('dragover');
       $(this).css('border', '2px solid #0B85A1');
     });
-    obj.on('dragover', function (e) {
+    $droppable_zone.on('dragover', function (e) {
       e.stopPropagation();
       e.preventDefault();
     });
-    obj.on('drop', function (e) {
+    $droppable_zone.on('drop', function (e) {
       $(this).css('border', '2px dotted #0B85A1');
       e.preventDefault();
-      obj.removeClass('dragover');
+      $droppable_zone.removeClass('dragover');
 
-      document.getElementById('file').files = e.originalEvent.dataTransfer.files;
-//      showButton();
-      //We need to send dropped files to Server
-//      handleFileUpload(files, obj);
+      $file_input[0].files = e.originalEvent.dataTransfer.files;
+      showButton();
     });
-
 
     // Need to be enabled for handling disabled/broken Javascript
     $('#submit').addClass('hidden');
-    $('input#file').on('change', showButton);
+    $file_input.on('change', showButton);
 
     function showButton() {
       $('#submit').removeClass('hidden');
-      $('form#form_FILES_UPLOAD').submit();
-      $('#submit').click();
     }
 
-  });
-</script>
-<script>
-  /*
-  
-    $(function () {
-      var $files_list         = $('ul#files-list');
-      var $files_list_wrapper = $('ul#files-list-wrapper');
-      var $submit_btn         = $('input#submit');
-  
-      $submit_btn.on('click', processFiles);
-  
-      var element = document.querySelector('.droppable');
-      makeDroppable(element, droppedCallback);
-  
-      function processFiles() {
-      
-      }
-  
-      function droppedCallback(files) {
-        // Here, we simply log the Array of files to the console.
-        console.log(files);
-  
-        for (var i = 0; i < files.length; i++) {
-          addFileToList(files.item(i));
-        }
-  
-        var formData = new FormData();
-        formData.append("files", files);
-  
-        $.ajax({
-          url: '/files/upload',
-          method: 'post',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            alert('Files uploaded successfully.');
-            $files_list_wrapper.removeClass('hidden')
-          }
-        });
-        
-      }
-  
-      function addFileToList(file) {
-        var li = jQuery('<li></li>').text(file.name);
-        $files_list.append(li);
-      }
-  
-      function makeDroppable(element, callback) {
-  
-        var input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('multiple', true);
-        input.style.display = 'none';
-  
-        input.addEventListener('change', triggerCallback);
-        element.appendChild(input);
-  
-        element.addEventListener('dragover', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          element.classList.add('dragover');
-        });
-  
-        element.addEventListener('dragleave', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          element.classList.remove('dragover');
-        });
-  
-        element.addEventListener('drop', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          element.classList.remove('dragover');
-          triggerCallback(e);
-        });
-  
-        element.addEventListener('click', function () {
-          input.value = null;
-          input.click();
-        });
-  
-        function triggerCallback(e) {
-          var files;
-          if (e.dataTransfer) {
-            files = e.dataTransfer.files;
-          } else if (e.target) {
-            files = e.target.files;
-          }
-          callback.call(null, files);
-        }
-      }
+    $submit_btn.on('click', function () {
+      $(this).html(
+          '<span class="fa fa-spinner fa-spin"></span>'
+      )
     });
-  */
 
+  });
 </script>
