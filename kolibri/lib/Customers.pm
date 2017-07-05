@@ -42,7 +42,7 @@ my @template_rows = (
 );
 my $SCHEMA = schema('Customer');
 my $ROUTE = '/customers';
-my $NAME = 'Замовник';
+my $NAME = 'Customer';
 
 # Show
 get $ROUTE => route_show_list($SCHEMA, $ROUTE, $NAME, \@template_rows);

@@ -30,7 +30,7 @@ my @template_rows = (
 );
 my $SCHEMA = schema('ExtraElement');
 my $ROUTE = '/extra_elements';
-my $NAME = 'Додатковий елемент';
+my $NAME = 'Extra elements';
 
 # Show
 get $ROUTE => route_show_list($SCHEMA, $ROUTE, $NAME, \@template_rows);

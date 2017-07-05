@@ -30,7 +30,7 @@ my @template_rows = (
 );
 my $SCHEMA = schema('Material');
 my $ROUTE = '/materials';
-my $NAME = 'Матеріал';
+my $NAME = 'Material';
 
 # Show
 get $ROUTE => route_show_list($SCHEMA, $ROUTE, $NAME, \@template_rows);

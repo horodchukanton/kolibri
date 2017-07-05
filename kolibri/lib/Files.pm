@@ -82,7 +82,7 @@ my @template_rows = (
 );
 my $SCHEMA = schema('File');
 my $ROUTE = '/files';
-my $NAME = 'Файли';
+my $NAME = 'Files';
 
 # Create
 post $ROUTE => route_create($SCHEMA, $ROUTE);
