@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PERL5_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/public" isTestSource="false" />
+    </content>
+    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="jdk" jdkName="Perl v5.24.1 (MSWin32-x64-multi-thread)" jdkType="Perl5 Interpreter" />
+  </component>
+</module>

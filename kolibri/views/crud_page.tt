@@ -1,0 +1,28 @@
+[% INCLUDE modal_template.tt template = template %]
+
+
+<div class="row">
+  <div class="well well-sm col-md-8 col-md-offset-2">
+    [% IF !without_add %]
+      <button type="button" class="btn btn-success"
+              data-toggle="modal" data-target="#[% modal_id || 'modal_add' %]"
+              data-controller='[% controller %]'
+      ><span class="glyphicon glyphicon-plus"></span>Додати
+      </button>
+    [% END %]
+    [% IF with_delete_all %]
+      <a href="[% controller %]/delete/all" class="btn btn-danger">Видалити всі</a>
+    [% END %]
+    [% IF controls %]
+      [% controls  %]
+    [% END %]
+  </div>
+</div>
+
+
+[% IF subtemplate %]
+<div class="row">
+  [% subtemplate %]
+</div>
+[% END %]
+

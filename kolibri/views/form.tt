@@ -1,0 +1,62 @@
+<form action="[% controller %]" method="post" name='[% form_id %]' id='[% form_id %]' class="form form-horizontal">
+
+  <div class="box box-theme">
+    [% IF caption %]
+      <div class="box-header with-border">[% caption %]</div>
+    [% END %]
+    <div class="box-body">
+      [% FOREACH row IN fields %]
+        
+        [% SWITCH row.type %]
+          
+          [% CASE 'hidden' %]
+            <input type="hidden" name='[% row.name || row.id %]' value="[% item.${row.name} %]">
+          
+          [% CASE 'checkbox' %]
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" value="1" id="row.id">
+                [% row.lang_name %]
+              </label>
+            </div>
+          
+          [% CASE 'select' %]
+          
+          <div class="form-group">
+            <label for="[% row.id %]" class="control-label col-md-3">[% row.lang_name %]</label>
+            <div class="col-md-9">
+              <p class="form-control-static">[% item.${row.name} %]</p>
+              <input type="hidden" name='[% row.name || row.id %]' value="[% item.${row.name} %]">
+            </div>
+          </div>
+  
+          [% CASE 'static' %]
+          <div class="form-group">
+            <label for="[% row.id %]" class="control-label col-md-3">[% row.lang_name %]</label>
+            <div class="col-md-9">
+              <p class="form-control-static">[% item.${row.name} %]</p>
+            </div>
+          </div>
+          [% CASE DEFAULT %]
+            <div class="form-group">
+              <label for="[% row.id %]" class="control-label col-md-3">[% row.lang_name %]</label>
+              <div class="col-md-9">
+                <input type="[% row.type %]" class='form-control' name='[% row.name || row.id %]'
+                       value="[% item.${row.name} %]">
+              </div>
+            </div>
+          
+        [% END %]
+      
+      [% END %]
+    </div>
+    
+    [% IF show_submit %]
+      <div class="box-footer text-right">
+        <input class="btn btn-primary" type="submit" value="[% submit_name || 'Надіслати' %]"
+               name="[% submit_name || 'submit' %]">
+      </div>
+    [% END %]
+  </div>
+
+</form>

@@ -1,0 +1,5 @@
+
+
+[% FOREACH panel IN panels %]
+    <div class="col-md-6">[% panel %] </div>
+[% END %]
