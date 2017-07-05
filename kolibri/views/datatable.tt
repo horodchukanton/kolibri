@@ -59,9 +59,9 @@
   jQuery(function () {
 
     var datatable_options = $.extend({
-      dom     : 'lB<"clear">frtip',
+      dom     : '<"col-md-3"l><"col-md-6"B><"col-md-3"f>rtip',
       buttons : [
-//          'excel', 'pdf',
+          'excel', 'pdf',
         {
           extend: 'colvis',
           text  : 'Показати/заховати кол.'
