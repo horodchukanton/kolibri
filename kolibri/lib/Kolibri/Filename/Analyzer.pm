@@ -29,6 +29,7 @@ sub new{
     materials      => $attr->{materials},
     extra_elements => $attr->{extra_elements},
     rows           => [ ],
+    customers_are_required => $attr->{customers_are_required},
     debug          => $attr->{debug} || 0
   };
   
@@ -61,7 +62,7 @@ sub new{
 sub add_row {
   my ($self, $text) = @_;
   
-  my $analyzed = $self->analyze(lc($text));
+  my $analyzed = $self->analyze($text);
   
   push (@{$self->{rows}}, $analyzed);
   
@@ -79,8 +80,6 @@ sub add_row {
 #**********************************************************
 sub get_results {
   my ($self) = @_;
-  
-#  my @list = map { { params => $_->{row} }  } @{$self->{rows}};
   
   return wantarray ? @{$self->{rows}} : \$self->{rows};
 }
@@ -198,10 +197,11 @@ sub analyze {
     $result{matched_size} = $1;
   }
   
+  
   unless (
     $result{matched_size}
     && $result{matched_materials}
-    && $result{matched_customers}
+    && ($result{matched_customers} && $self->{customers_are_required})
   ){
     $result{error} = 'Не знайдено всі поля в імені файлу';
   }

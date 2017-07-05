@@ -142,12 +142,16 @@ get '/files/upload' => sub {
 post '/files/upload/file' => sub {
     
     my $upload_obj = request->upload('file');
+    my $customers_are_required = param('CUSTOMERS_REQUIRED');
+    
     my $content = $upload_obj->content;
     
     # Translate cyrillic 'x' to latin 'x'
     $content =~ s/х/x/gm;
     
-    my ($without_error, $with_error) = analyze_uploaded_file_content($content);
+    my ($without_error, $with_error) = analyze_uploaded_file_content($content, {
+        CUSTOMERS_REQUIRED => $customers_are_required
+      });
     
     my @bad_rows = transform_bad_rows(@{$with_error});
     
@@ -156,10 +160,14 @@ post '/files/upload/file' => sub {
       { $columns{id} => $columns{name} }
     };
     
-    my %materials_hash = map {$id_name->($_)} schema('Material')->search(undef, { columns => [ 'id', 'name' ] });
-    my %customers_hash = map {$id_name->($_)} schema('Customer')->search(undef, { columns => [ 'id', 'name' ] });
-    my %extra_elements_hash = map {$id_name->($_)} schema('ExtraElement')->search(undef,
-      { columns => [ 'id', 'name' ] });
+    my %materials_hash
+      = map {$id_name->($_)} schema('Material')->search(undef, { columns => [ 'id', 'name' ] });
+    
+    my %customers_hash
+      = map {$id_name->($_)} schema('Customer')->search(undef, { columns => [ 'id', 'name' ] });
+    
+    my %extra_elements_hash
+      = map {$id_name->($_)} schema('ExtraElement')->search(undef, { columns => [ 'id', 'name' ] });
     
     my @price_calculated = calculate_prices(@{$without_error});
     
@@ -173,6 +181,7 @@ post '/files/upload/file' => sub {
         CUSTOMERS_HASH      => $json->encode(\%customers_hash),
         EXTRA_ELEMENTS_HASH => $json->encode(\%extra_elements_hash),
         
+        customers_required  => $customers_are_required,
         bad_names           => \@bad_rows,
         has_bad_names       => scalar(@bad_rows),
       };
@@ -259,7 +268,7 @@ get '/files/view' => sub {
       my %file = $rs->get_columns();
       
       # This part can be replaced with JOIN
-#      my $customer_name = $Customers->find($file{customer})->name;
+      #      my $customer_name = $Customers->find($file{customer})->name;
       my $customer_name = $customer_names{$file{customer}};
       my $material_name = $Materials->find($file{material})->name;
       
@@ -296,19 +305,19 @@ get '/files/view' => sub {
     return crud_page($SCHEMA, \@template_rows, {
         controller => '/files',
         template   => {
-          without_add => 1,
+          without_add     => 1,
           with_delete_all => 1,
-          heading     => $NAME,
-          controls => $controls
+          heading         => $NAME,
+          controls        => $controls
         },
         table      => {
-#          subtemplate => $controls,
+          #          subtemplate => $controls,
           headings => [
-#            'id',
+            #            'id',
             'name',
             'customer',
             'material',
-#                        'size',
+            #                        'size',
             'area',
             'material_price',
             'extra_elements',
@@ -327,7 +336,7 @@ get '/files/view' => sub {
 =cut
 #**********************************************************
 sub analyze_uploaded_file_content {
-  my ($content) = @_;
+  my ($content, $attr) = @_;
   
   my %data = ();
   
@@ -342,9 +351,10 @@ sub analyze_uploaded_file_content {
   Kolibri::Filename::Analyzer->import();
   
   my $analyzer = Kolibri::Filename::Analyzer->new({
-    customers      => $data{Customer},
-    extra_elements => $data{ExtraElement},
-    materials      => $data{Material},
+    customers              => $data{Customer},
+    extra_elements         => $data{ExtraElement},
+    materials              => $data{Material},
+    customers_are_required => $attr->{CUSTOMERS_REQUIRED}
     #    debug => 1,
   });
   
@@ -356,8 +366,17 @@ sub analyze_uploaded_file_content {
   
   my @analyzed = $analyzer->get_results;
   
-  my @without_error = grep { !$_->{error} } @analyzed;
-  my @with_error = grep { $_->{error} } @analyzed;
+  my @without_error = ();
+  my @with_error = ();
+  
+  foreach my $row ( @analyzed ) {
+    if ( defined $row->{error} ) {
+      push(@with_error, $row);
+    }
+    else {
+      push(@without_error, $row);
+    }
+  }
   
   return wantarray ? ( \@without_error, \@with_error ) : [ \@without_error, \@with_error ];
 }
@@ -388,8 +407,6 @@ sub calculate_prices {
     my %params_for_row = (
       price_per_m => 0
     );
-    
-    print Dumper $_;
     
     my $material = $_->{materials};
     if ( $material && $material_by_id{$material} ) {
@@ -436,10 +453,15 @@ sub calculate_single {
   };
   
   # Calculate material price
-  $row->{material_price} = $row->{area} * $attr->{price_per_m};
+  if ($row->{area} < 18){
+    $row->{material_price} = $row->{area} * $attr->{price_per_m};
+  }
+  else {
+    $row->{material_price} = undef;
+  }
   
   my $has_extra = ( $row && $row->{extra_elements} );
-  $row->{extra_price} //= ($has_extra || $row->{area} >= 18)
+  $row->{extra_price} //= ($has_extra)
     ? undef
     : '0.00';
   
