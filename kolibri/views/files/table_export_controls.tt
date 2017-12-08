@@ -5,7 +5,7 @@
   var customers = JSON.parse('[% customers %]');
 
   $(function () {
-    
+
     // Add sum function
     jQuery.fn.dataTable.Api.register('sum()', function () {
       return this.flatten().reduce(function (a, b) {
@@ -21,7 +21,7 @@
         return result.toFixed(2);
       }, 0);
     });
-    
+
     // Add sum to footer
     window['DATATABLE_OPTIONS']['footerCallback'] = function (row, data, start, end, display) {
       var api = this.api(), data;
@@ -46,32 +46,42 @@
         // Update footer
         $(api.column(8).footer()).html(pageTotal);
       }
-      catch (Error){
+      catch (Error) {
         console.log(Error)
       }
     };
-    
+
     var current_date = new Date();
-    var day = current_date.getDay();
-    var month = current_date.getMonth();
-    
-    var date_str  = current_date.getFullYear()
+    var day          = current_date.getDay();
+    var month        = current_date.getMonth();
+
+    var monthNames = [
+      "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
+      "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
+    ];
+
+    var date_str = current_date.getFullYear()
         + '-' + (month < 10 ? '0' + month : month)
         + '-' + (day < 10 ? '0' + day : day);
+
+    var month_name = monthNames[current_date.getMonth()];
 
     function exportCurrentWithName(name, export_options) {
       var api = $('#table_').DataTable();
 
       api.button().add(0, {
-        extend        : 'csv',
-        text          : name,
-        title         : name,
-//          extension    : '.xls',
+        extend        : 'excel',
+        text          : name + '_' + date_str,
+        title         : name + '_' + date_str,
         bom           : true,
-//          charset : ''
+        charset       : '',
         fieldSeparator: ';',
         exportOptions : export_options,
-        footer        : true
+        footer        : true,
+        customize     : function (xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+          $('c[r=A1] t', sheet).text(name + ' ( ' + month_name + ' )');
+        }
       });
 
       var button = api.button(0);
@@ -94,7 +104,7 @@
         api.page.len(-1).draw();
         api.search(customer_name).draw();
 
-        exportCurrentWithName(customer_name + '_' + date_str, {
+        exportCurrentWithName(customer_name, {
           columns: ':not(:eq(1))'
         });
       });
